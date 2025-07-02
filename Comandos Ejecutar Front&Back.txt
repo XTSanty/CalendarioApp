@@ -1,0 +1,16 @@
+cd backend
+npm init -y
+npm install express mongoose cors dotenv
+npm install -D nodemon
+
+cd /frontend
+npx create-react-app .
+npm install axios
+
+Ejecutar backEnd
+cd backend
+npm run dev
+
+Ejecutar FrontEnd
+cd frontend
+npm start

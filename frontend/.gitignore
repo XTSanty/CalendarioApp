@@ -1,0 +1,8 @@
+# Node
+node_modules/
+.env
+
+# React
+frontend/node_modules/
+frontend/build/static/js/*.map
+frontend/build/static/css/*.map

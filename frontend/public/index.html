@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Calendario de eventos personal - Gestiona tus eventos de forma fácil"
+    />
+    <link rel="icon" href="/Calendario.ico" />
+    <title>📅 Calendario de Eventos</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .app-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 20px;
+      }
+
+      .app-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .app-header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        color: #4a6fa5;
+      }
+
+      .app-header p {
+        font-size: 1rem;
+        color: #6c757d;
+      }
+
+      .clock-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .clock-container div {
+        padding: 10px;
+        background: #e3f2fd;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4a6fa5;
+      }
+
+      .reminder-container {
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #e3f2fd;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+
+      .reminder-container h2 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        color: #4a6fa5;
+      }
+
+      .reminder-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .reminder-form label {
+        font-weight: bold;
+      }
+
+      .reminder-form input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .reminder-form button {
+        padding: 8px 16px;
+        background: #4a6fa5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .reminder-form button:hover {
+        background: #3a5890;
+      }
+
+      .time-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .time-option {
+        padding: 8px 16px;
+        background: #4a6fa5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .time-option.selected {
+        background: #3a5890;
+      }
+
+      .time-option:hover {
+        background: #3a5890;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="app-header">
+        <h1>📅 Calendario de Eventos</h1>
+        <p>Gestiona tus eventos de forma personal y rapida, Solo haga click en cualquier dia para agendar!!</p>
+      </header>
+      <div class="clock-container">
+        <div id="clock-time">
+          <!-- Hora y minutos en tiempo real -->
+        </div>
+        <div id="clock-date">
+          <!-- Día, fecha, mes y año -->
+        </div>
+      </div>
+      <div class="reminder-container">
+        <h2>Recordatorio Express</h2>
+        <form class="reminder-form" id="reminderForm">
+          <label for="reminderText">Inserte su recordatorio:</label>
+          <input type="text" id="reminderText" name="reminderText" required>
+          <div class="time-options">
+            <button type="button" class="time-option" data-time="10">10 segundos</button>
+            <button type="button" class="time-option" data-time="30">30 segundos</button>
+            <button type="button" class="time-option" data-time="60">1 minuto</button>
+            <button type="button" class="time-option" data-time="300">5 minutos</button>
+            <button type="button" class="time-option" data-time="600">10 minutos</button>
+            <button type="button" class="time-option" data-time="900">15 minutos</button>
+            <button type="button" class="time-option" data-time="2700">45 minutos</button>
+            <button type="button" class="time-option" data-time="3600">1 hora</button>
+            <button type="button" class="time-option" data-time="7200">2 horas</button>
+            <button type="button" class="time-option" data-time="10800">3 horas</button>
+          </div>
+          <button type="submit">Establecer Recordatorio</button>
+        </form>
+      </div>
+      <div id="root"></div>
+    </div>
+
+    <script>
+      function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const day = now.toLocaleDateString('es-ES', { weekday: 'long' });
+        const date = now.getDate();
+        const month = now.toLocaleDateString('es-ES', { month: 'long' });
+        const year = now.getFullYear();
+
+        document.getElementById('clock-time').textContent = `${hours}:${minutes}`;
+        document.getElementById('clock-date').textContent = `${day}, ${date} de ${month} de ${year}`;
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      document.getElementById('reminderForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const reminderText = document.getElementById('reminderText').value;
+        const selectedTime = document.querySelector('.time-option.selected')?.dataset.time || 10;
+
+        // Guardar el recordatorio en localStorage
+        localStorage.setItem('reminderText', reminderText);
+
+        // Mostrar alerta de confirmación
+        alert(`Recordatorio creado: ${reminderText} en ${selectedTime} segundos`);
+
+        // Establecer el temporizador
+        setTimeout(() => {
+          const audio = new Audio('/Bell.mp3'); 
+          audio.play();
+
+          // Mostrar alerta al mismo tiempo que se reproduce el sonido
+          alert(`Recordatorio: ${reminderText}`);
+        }, selectedTime * 1000);
+      });
+
+      document.querySelectorAll('.time-option').forEach(button => {
+        button.addEventListener('click', function() {
+          document.querySelector('.time-option.selected')?.classList.remove('selected');
+          button.classList.add('selected');
+        });
+      });
+    </script>
+  </body>
+</html>
